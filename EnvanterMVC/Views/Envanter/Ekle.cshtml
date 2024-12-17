@@ -1,0 +1,116 @@
+﻿@model EnvanterMVC.Entities.Model.User
+@{
+    ViewBag.Title = "Ekle";
+    Layout = "_Layout.cshtml";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Sayfası</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-control, .form-select {
+            width: 100% !important;
+            border-radius: 8px;
+            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .form-select:focus, .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0px 0px 8px rgba(40, 167, 69, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-4">
+        <h2 class="text-center mb-4">Envanter Formu</h2>
+        <form method="post">
+            <input type="hidden" asp-for="Id">
+            <div asp-validation-summary="All"></div>
+
+            <div class="form-group mb-3">
+                <label for="Tur">Tür</label>
+                <select id="Tur" name="Tur" class="form-select">
+                    <option selected>-- Tür Seçiniz --</option>
+                    <option value="Notebook">Notebook</option>
+                    <option value="Masaüstü">Masaüstü</option>
+                    <option value="Monitör">Monitör</option>
+                    <option value="Telefon">Telefon</option>
+                    <option value="Tablet">Tablet</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Marka">Marka</label>
+                <select id="Marka" name="Marka" class="form-select">
+                    <option selected>-- Marka Seçiniz --</option>
+                    <option value="hp">HP</option>
+                    <option value="lenovo">Lenovo</option>
+                    <option value="dell">Dell</option>
+                    <option value="Asus">Asus</option>
+                    <option value="Apple">Apple</option>
+                    <option value="Samsung">Samsung</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Model">Model</label>
+                <input type="text" id="Model" name="Model" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="SeriNo">Seri No</label>
+                <input type="text" id="SeriNo" name="SeriNo" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Tarih">Tarih</label>
+                <input type="date" id="Tarih" name="Tarih" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="TeslimEden">Teslim Eden</label>
+                <input type="text" id="TeslimEden" name="TeslimEden" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="TeslimAlan">Teslim Alan</label>
+                <input type="text" id="TeslimAlan" name="TeslimAlan" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="TeslimEdilenDepartman">Teslim Edilen Departman</label>
+                <input type="text" id="TeslimEdilenDepartman" name="TeslimEdilenDepartman" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="UrunDurum">Ürün Durum</label>
+                <input type="text" id="UrunDurum" name="UrunDurum" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="IMEI">IMEI</label>
+                <input type="text" id="IMEI" name="IMEI" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Aciklama">Açıklama</label>
+                <textarea ></textarea>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-outline-success">Kaydet</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

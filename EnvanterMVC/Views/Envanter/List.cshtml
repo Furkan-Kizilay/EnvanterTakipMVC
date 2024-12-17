@@ -1,0 +1,49 @@
+﻿@model  List<EnvanterMVC.Entities.Model.User>
+@{
+    ViewBag.Title = "Listele";
+}
+
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <td>Tür</td>
+            <td>Marka</td>
+            <td>Model</td>
+            <td>Seri No</td>
+            <td>Tarih</td>
+            <td>Teslim Eden</td>
+            <td>Teslim Alan</td>
+            <td>Teslim Edilen Dept.</td>
+            <td>Ürün Durumu</td>
+            <td>IMEI</td>
+            <td>Açıklama</td>
+            <td>Düzenle</td>
+            <td>Sil</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th>@item.Id</th>
+                <td>@item.Tur</td>
+                <td>@item.Marka</td>
+                <td>@item.Model</td>
+                <td>@item.SeriNo</td>
+                <td>@item.Tarih</td>
+                <td>@item.TeslimEden</td>
+                <td>@item.TeslimAlan</td>
+                <td>@item.TeslimEdilenDepartman</td>
+                <td>@item.IMEI</td>
+                <td>@item.Aciklama</td>
+                <td><a href="Duzenle/@item.Id" class="btn btn-outline-info">Düzenle</a></td>
+                <td><a href="Sil/@item.Id" class="btn btn-outline-warning">Sil</a></td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+<a href="Ekle" class="btn btn-outline-success">Yeni Ekle</a>
+
+

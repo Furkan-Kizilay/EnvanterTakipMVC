@@ -1,0 +1,141 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css ">
+    @{
+        Layout = null;
+    }
+
+    <title>Login Page</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-image: url('/css/erciyes.jpg');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #main {
+            background-color: whitesmoke;
+            border-radius: 15px;
+            box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            width: 390px;
+            opacity: 0.9;
+            text-align: center;
+            margin: auto;
+        }
+
+        h1 {
+            font-size: 1.7em;
+            margin-bottom: 15px;
+        }
+
+        .input-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+            .input-container i {
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #888;
+            }
+
+            .input-container input {
+                width: 100%;
+                padding: 10px 40px;
+                /* İkona yer açmak için padding ayarı */
+                margin: 10px 0;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        #erciyeslogo {
+            object-fit: cover;
+            width: 130px;
+            height: 130px;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <form action="" method="post">
+        @Html.AntiForgeryToken()
+
+        <div id="main">
+            <img id="erciyeslogo" src="/css/dbicon.png">
+            <h1>Admin Giriş Sayfası</h1>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger" role="alert" style="font-size: 20px;">
+                    Kullanıcı adı veya şifre hatalı!
+                </div>
+            }
+
+            @* Kullanıcı Adı & Username *@
+            <div class="input-container">
+                <i class="fas fa-user"></i>
+                <input type="text" placeholder="Kullanıcı Adı" required name="Username">
+            </div>
+
+            @* Şifre & Password *@
+            <div class="input-container">
+                <i class="fas fa-lock"></i>
+                <input type="password" placeholder="Şifre" required name="Password">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Giriş Yap</button>
+        </div>
+    </form>
+</body>
+
+</html>
+
