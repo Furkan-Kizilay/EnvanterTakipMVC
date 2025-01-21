@@ -19,5 +19,6 @@ namespace EnvanterMVC
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             FluentValidationModelValidatorProvider.Configure();
         }
+        
     }
 }

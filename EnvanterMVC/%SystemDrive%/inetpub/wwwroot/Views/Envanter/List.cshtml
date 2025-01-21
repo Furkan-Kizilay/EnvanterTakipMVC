@@ -1,0 +1,74 @@
+﻿@model  List<EnvanterMVC.Entities.Model.User>
+@{
+    ViewBag.Title = "Listele";
+}
+<form action="List">
+    @Html.TextBox("ara")
+    <button type="submit" class="btn btn-secondary">Ara</button>
+</form>
+<table id="envanterTable" class="table table-hover table-striped table-responsive">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Tür</th>
+            <th>Marka</th>
+            <th>Model</th>
+            <th>Seri No</th>
+            <th>Tarih</th>
+            <th>Teslim Eden</th>
+            <th>Teslim Alan</th>
+            <th>Teslim Edilen Dept.</th>
+            <th>Ürün Durumu</th>
+            <th>IMEI</th>
+            <th>Açıklama</th>
+            <th>Düzenle</th>
+            <th>Sil</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th>@item.Id</th>
+                <td>@item.Tur</td>
+                <td>@item.Marka</td>
+                <td>@item.Model</td>
+                <td>@item.SeriNo</td>
+                <td>@item.Tarih</td>
+                <td>@item.TeslimEden</td>
+                <td>@item.TeslimAlan</td>
+                <td>@item.TeslimEdilenDepartman</td>
+                <td>@item.UrunDurum</td>
+                <td>@item.IMEI</td>
+                <td>@item.Aciklama</td>
+                <td>
+                    @Html.ActionLink("Düzenle", "Duzenle", new { id = item.Id }, new { @class = "btn btn-info" })
+                </td>
+                <td>
+                    @Html.ActionLink("Sil", "Sil", new { id = item.Id }, new { @class = "btn btn-warning", onclick = "return confirm('Bu Kayıt Silinsin mi?')" })
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+<a href="Ekle" class="btn btn-outline-success">Yeni Ekle</a>
+<br />
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#envanterTable').DataTable({
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/Turkish.json"
+                },
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true
+            });
+        });
+    </script>
+}
+
+
+

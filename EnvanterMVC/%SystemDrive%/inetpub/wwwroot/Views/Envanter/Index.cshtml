@@ -1,0 +1,89 @@
+﻿@{
+    ViewBag.Title = "Barkod Okut";
+}
+
+<h2>Barkod Okut ve Kaydet</h2>
+
+<div>
+    <video id="barcodeScanner" style="width: 100%; height: auto;"></video>
+    <p id="barcodeResult"></p>
+    <button id="saveBarcode" class="btn btn-success">Kaydet</button>
+</div>
+
+<table id="barcodeTable" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Barkod</th>
+            <th>Tarih</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Okutulan barkodlar buraya eklenecek -->
+    </tbody>
+</table>
+
+@section scripts {
+    <!-- QuaggaJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script>
+        // Kamerayı başlat ve barkodları oku
+        document.addEventListener('DOMContentLoaded', () => {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#barcodeScanner'),
+                },
+                decoder: {
+                    readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"]
+                }
+            }, (err) => {
+                if (err) {
+                    console.error("Quagga Başlatma Hatası:", err);
+                    return;
+                }
+                Quagga.start();
+            });
+
+            Quagga.onDetected((result) => {
+                const barcode = result.codeResult.code;
+                document.getElementById("barcodeResult").innerText = "Barkod: " + barcode;
+                document.getElementById("saveBarcode").dataset.barcode = barcode; // Butona barkod ekle
+            });
+
+            // Barkodu kaydetme işlemi
+            document.getElementById("saveBarcode").addEventListener('click', () => {
+                const barcode = document.getElementById("saveBarcode").dataset.barcode;
+
+                if (!barcode) {
+                    alert("Henüz bir barkod okunmadı!");
+                    return;
+                }
+
+                fetch('/Envanter/AddBarcode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ barcode })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Barkodu tabloya ekle
+                            const table = document.getElementById("barcodeTable").querySelector("tbody");
+                            const row = table.insertRow();
+                            row.innerHTML = `
+                                <td>${data.barcode}</td>
+                                <td>${data.date}</td>
+                            `;
+                            alert("Barkod başarıyla kaydedildi!");
+                        } else {
+                            alert("Kaydetme hatası: " + data.message);
+                        }
+                    })
+                    .catch(err => console.error("Hata:", err));
+            });
+        });
+    </script>
+}

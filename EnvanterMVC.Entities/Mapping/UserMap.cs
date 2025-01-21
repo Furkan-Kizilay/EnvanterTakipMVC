@@ -16,14 +16,6 @@ namespace EnvanterMVC.Entities.Mapping
             this.ToTable("User");
             this.HasKey(x=> x.Id); // Primary key
             this.Property(x => x.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity); // Oto Identity
-            this.Property(x=> x.Username).IsRequired();
-            this.Property(x=> x.Password).IsRequired();
-            this.Property(x => x.Username).HasMaxLength(30);
-            this.Property(x=> x.Password).HasMaxLength(30);
-            this.Property(x=> x.Tur).IsRequired();
-            this.Property(x=> x.TeslimEden).IsRequired();
-
-
         }
     }
 }
