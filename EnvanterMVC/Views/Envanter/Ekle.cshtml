@@ -2,24 +2,38 @@
 @{
     ViewBag.Title = "Ekle";
 }
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Veri Ekle</title>
     <style>
         .form-control, .form-select {
             width: 100% !important;
+            min-width: 350px;
+            max-width: 100%;
+            height: 45px;
             border-radius: 8px;
-            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease-in-out;
+            padding: 10px;
         }
 
-        .form-select:focus, .form-control:focus {
-            border-color: #28a745;
-            box-shadow: 0px 0px 8px rgba(40, 167, 69, 0.5);
+            .form-select:focus, .form-control:focus {
+                border-color: #28a745;
+                box-shadow: 0px 0px 10px rgba(40, 167, 69, 0.5);
+            }
+
+        .text-danger {
+            margin-top: 5px; /* Validation mesajı */
         }
     </style>
+</head>
+<body>
+    <h2> Veri Ekle </h2>
     <div class="container-fluid mt-4">
-        <h2 class="text-center mb-4">Envanter Formu</h2>
         <form method="post" action="Ekle">
             @Html.AntiForgeryToken()
-            @Html.ValidationSummary(false, "", new {@class="text-danger" })
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
             <input type="hidden" asp-for="Id">
             <div asp-validation-summary="All"></div>
 
@@ -71,7 +85,7 @@
             <div class="form-group mb-3">
                 <label for="TeslimAlan">Teslim Alan</label>
                 <input type="text" id="TeslimAlan" name="TeslimAlan" class="form-control">
-                @Html.ValidationMessageFor(x => x.TeslimAlan, "", new {@class="text-danger"})
+                @Html.ValidationMessageFor(x => x.TeslimAlan, "", new { @class = "text-danger" })
             </div>
 
             <div class="form-group mb-3">
@@ -95,7 +109,59 @@
             </div>
 
             <div class="text-center mt-4">
+                <a href="List" class="btn btn-primary">Geri Dön</a>
                 <button type="submit" class="btn btn-outline-success">Kaydet</button>
             </div>
         </form>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tur = urlParams.get('tur');
+            const marka = urlParams.get('marka');
+            const model = urlParams.get('model');
+            const seriNo = urlParams.get('seriNo');
+
+            function setDropdownValue(elementId, value) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    const options = Array.from(element.options);
+                    const match = options.find(option => option.value.toLowerCase() === value.toLowerCase());
+                    if (match) {
+                        element.value = match.value;
+                    } else {
+                        console.warn(`Değer "${value}" ${elementId} dropdown içinde bulunamadı.`);
+                    }
+                } else {
+                    console.warn(`${elementId} dropdown bulunamadı.`);
+                }
+            }
+
+            if (tur) {
+                setDropdownValue("Tur", tur);
+            }
+            if (marka) {
+                setDropdownValue("Marka", marka);
+            }
+            if (model) {
+                const modelInput = document.getElementById("Model");
+                if (modelInput) {
+                    modelInput.value = model;
+                } else {
+                    console.warn("Model input alanı bulunamadı.");
+                }
+            }
+            if (seriNo) {
+                const seriNoInput = document.getElementById("SeriNo");
+                if (seriNoInput) {
+                    seriNoInput.value = seriNo;
+                } else {
+                    console.warn("SeriNo input alanı bulunamadı.");
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

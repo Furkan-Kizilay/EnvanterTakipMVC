@@ -23,9 +23,5 @@ namespace EnvanterMVC.Entities.Model
         public string UrunDurum { get; set; }
         public int IMEI { get; set; }
         public string Aciklama { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-
-
     }
 }
