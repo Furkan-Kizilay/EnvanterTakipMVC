@@ -1,6 +1,7 @@
-﻿
+﻿@model EnvanterMVC.Entities.Model.Kullanicilar
 @{
     ViewBag.Title = "Login";
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -12,12 +13,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/css/style.css ">
-    @{
-        Layout = null;
-    }
-
-    <title>Login Page</title>
+    <link rel="stylesheet" href="./css/style.css ">
+    <title>Giriş Yap</title>
 
     <style>
         * {
@@ -30,6 +27,7 @@
         html {
             height: 100%;
             margin: 0;
+            background-color: #ccc;
             font-family: Arial, sans-serif;
         }
 
@@ -110,27 +108,30 @@
         @Html.AntiForgeryToken()
 
         <div id="main">
-            <img id="erciyeslogo" src="/css/dbicon.png">
             <h1>Admin Giriş Sayfası</h1>
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="alert alert-danger" role="alert" style="font-size: 20px;">
-                    Kullanıcı adı veya şifre hatalı!
-                </div>
-            }
+
 
             @* Kullanıcı Adı & Username *@
             <div class="input-container">
                 <i class="fas fa-user"></i>
-                <input type="text" placeholder="Kullanıcı Adı" required >
+                <input type="text" placeholder="Kullanıcı Adı" required name="KullaniciAdi">
             </div>
 
             @* Şifre & Password *@
             <div class="input-container">
                 <i class="fas fa-lock"></i>
-                <input type="password" placeholder="Şifre" required>
+                <input type="password" placeholder="Şifre" required name="Sifre">
             </div>
+            @* ViewBag ile Hata Mesajı & Error Message *@
+            <div class="form-group">
+                @if (!string.IsNullOrEmpty(ViewBag.error))
+                {
+                    <div class="alert alert-danger" role="alert" style="font-size: 20px;">@ViewBag.error</div>
+                }
+            </div>
+
+
 
             <button type="submit" class="btn btn-primary">Giriş Yap</button>
         </div>

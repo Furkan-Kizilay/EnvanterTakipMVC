@@ -5,8 +5,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Barkod ve QR Okuma</title>
+
     <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <style>
         #scanner {
             width: 50%;
@@ -16,160 +17,167 @@
     </style>
 </head>
 <body>
-    <h1>Barkod ve QR Okuyucu</h1>
-    <button id="startScan" class="btn btn-primary">Kodu Okut</button>
+    <h1>QR Okuyucu</h1>
+    <button id="startScan" class="btn btn-primary">Kamerayı Aç</button>
     <div id="scanner"></div>
 
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
-     document.addEventListener("DOMContentLoaded", function () {
-         const scannerDiv = document.getElementById("scanner");
-         let html5QrCode;
-         let isScanning = false;
+        document.addEventListener("DOMContentLoaded", function () {
+            const scannerDiv = document.getElementById("scanner");
+            let html5QrCode;
+            let isScanning = false;
 
-         function setDropdownValue(dropdownName, value) {
-             const dropdown = document.querySelector(`select[name="${dropdownName}"]`);
-             if (!dropdown) {
-                 console.warn(`${dropdownName} dropdown bulunamadı.`);
-                 return;
-             }
+            function setDropdownValue(dropdownName, value) {
+                const dropdown = document.querySelector(`select[name="${dropdownName}"]`);
+                if (!dropdown) {
+                    console.warn(`${dropdownName} dropdown bulunamadı.`);
+                    return;
+                }
 
-             const options = Array.from(dropdown.options);
-             const match = options.find(option => option.value.toLowerCase() === value.toLowerCase());
+                const options = Array.from(dropdown.options);
+                const match = options.find(option => option.value.toLowerCase() === value.toLowerCase());
 
-             if (match) {
-                 dropdown.value = match.value;
-             } else {
-                 console.warn(`${value} değeri ${dropdownName} dropdown içinde bulunamadı.`);
-             }
-         }
+                if (match) {
+                    dropdown.value = match.value;
+                } else {
+                    console.warn(`${value} değeri ${dropdownName} dropdown içinde bulunamadı.`);
+                }
+            }
 
-         document.getElementById("startScan").addEventListener("click", function () {
-             if (!isScanning) {
-                 scannerDiv.innerHTML = "";
-                 scannerDiv.style.display = "block";
-                 isScanning = true;
+            document.getElementById("startScan").addEventListener("click", function () {
+                if (!isScanning) {
+                    scannerDiv.innerHTML = "";
+                    scannerDiv.style.display = "block";
+                    isScanning = true;
 
-                 html5QrCode = new Html5Qrcode("scanner");
-                 html5QrCode.start(
-                     { facingMode: "environment" },
-                     { fps: 10, qrbox: Math.min(250, scannerDiv.offsetWidth) },
-                     (decodedText, decodedResult) => {
-                         console.log("Taranan veri:", decodedText);
+                    html5QrCode = new Html5Qrcode("scanner");
+                    html5QrCode.start(
+                        { facingMode: "environment" },
+                        {
+                            fps: 10,
+                            qrbox: Math.min(250, scannerDiv.offsetWidth)
+                        },
+                        (decodedText, decodedResult) => {
+                            console.log("Taranan veri:", decodedText);
 
-                         try {
-                             const data = decodedText.split(',').map(item => item.trim());
-                             console.log("Ayrıştırılan veri:", data);
+                            try {
+                                const data = decodedText.split(',').map(item => item.trim());
+                                console.log("Ayrıştırılan veri:", data);
 
-                             if (data.length !== 4) {
-                                 throw new Error(`Beklenen format: Tür,Marka,Model,SeriNo. Alınan veri: ${decodedText}`);
-                             }
+                                if (data.length !== 4) {
+                                    throw new Error(`Beklenen format: Tür,Marka,Model,SeriNo. Alınan veri: ${decodedText}`);
+                                }
 
-                             const [Tur, Marka, Model, SeriNo] = data;
-                             const queryString = `?tur=${encodeURIComponent(Tur)}&marka=${encodeURIComponent(Marka)}&model=${encodeURIComponent(Model)}&seriNo=${encodeURIComponent(SeriNo)}`;
-                             window.location.href = "Ekle" + queryString;
-                         } catch (error) {
-                             console.error("Taranan veri hatası:", error.message);
-                             alert(`QR veya Barkod verisi doğru formatta değil. Detay: ${error.message}`);
-                         }
+                                const [Tur, Marka, Model, SeriNo] = data;
+                                const queryString = `?tur=${encodeURIComponent(Tur)}&marka=${encodeURIComponent(Marka)}&model=${encodeURIComponent(Model)}&seriNo=${encodeURIComponent(SeriNo)}`;
+                                window.location.href = "Ekle" + queryString;
+                            } catch (error) {
+                                console.error("Taranan veri hatası:", error.message);
+                                alert(`QR veya Barkod verisi doğru formatta değil. Detay: ${error.message}`);
+                            }
 
-                         html5QrCode.stop().then(() => {
-                             html5QrCode.clear();
-                             scannerDiv.style.display = "none";
-                             isScanning = false;
-                         });
-                     },
-                     (errorMessage) => {
-                         console.error("Tarama hatası:", errorMessage);
-                     }
-                 ).catch(err => {
-                     console.error("Kamera başlatma hatası:", err);
-                     isScanning = false;
-                 });
-             }
-         });
+                            html5QrCode.stop().then(() => {
+                                html5QrCode.clear();
+                                scannerDiv.style.display = "none";
+                                isScanning = false;
+                            });
+                        },
+                        (errorMessage) => {
+                            console.error("Tarama hatası:", errorMessage);
+                        }
+                    ).catch(err => {
+                        console.error("Kamera başlatma hatası:", err);
+                        isScanning = false;
+                    });
+                }
+            });
 
-         const urlParams = new URLSearchParams(window.location.search);
-         const tur = urlParams.get('tur');
-         const marka = urlParams.get('marka');
-         const model = urlParams.get('model');
-         const seriNo = urlParams.get('seriNo');
+            const urlParams = new URLSearchParams(window.location.search);
+            const tur = urlParams.get('tur');
+            const marka = urlParams.get('marka');
+            const model = urlParams.get('model');
+            const seriNo = urlParams.get('seriNo');
 
-         if (tur) {
-             setDropdownValue("Tur", tur);
-         }
-         if (marka) {
-             setDropdownValue("Marka", marka);
-         }
-         if (model) {
-             const modelInput = document.getElementById("Model");
-             if (modelInput) {
-                 modelInput.value = model;
-             } else {
-                 console.warn("Model input alanı bulunamadı.");
-             }
-         }
-         if (seriNo) {
-             const seriNoInput = document.getElementById("SeriNo");
-             if (seriNoInput) {
-                 seriNoInput.value = seriNo;
-             } else {
-                 console.warn("SeriNo input alanı bulunamadı.");
-             }
-         }
-     });
+            if (tur) {
+                setDropdownValue("Tur", tur);
+            }
+            if (marka) {
+                setDropdownValue("Marka", marka);
+            }
+            if (model) {
+                const modelInput = document.getElementById("Model");
+                if (modelInput) {
+                    modelInput.value = model;
+                } else {
+                    console.warn("Model input alanı bulunamadı.");
+                }
+            }
+            if (seriNo) {
+                const seriNoInput = document.getElementById("SeriNo");
+                if (seriNoInput) {
+                    seriNoInput.value = seriNo;
+                } else {
+                    console.warn("SeriNo input alanı bulunamadı.");
+                }
+            }
+        });
     </script>
 
 
 
-    <form action="List">
+    <form action="List" class="mt-3">
         @Html.TextBox("ara")
         <button type="submit" class="btn btn-secondary">Ara</button>
     </form>
-    <table id="envanterTable" class="table table-hover table-striped table-responsive">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Tür</th>
-                <th>Marka</th>
-                <th>Model</th>
-                <th>Seri No</th>
-                <th>Tarih</th>
-                <th>Teslim Eden</th>
-                <th>Teslim Alan</th>
-                <th>Teslim Edilen Dept.</th>
-                <th>Ürün Durumu</th>
-                <th>IMEI</th>
-                <th>Açıklama</th>
-                <th>Düzenle</th>
-                <th>Sil</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    <div class="table-responsive">
+        <table id="envanterTable" class="table table-hover table-striped">
+            <thead>
                 <tr>
-                    <th>@item.Id</th>
-                    <td>@item.Tur</td>
-                    <td>@item.Marka</td>
-                    <td>@item.Model</td>
-                    <td>@item.SeriNo</td>
-                    <td>@item.Tarih</td>
-                    <td>@item.TeslimEden</td>
-                    <td>@item.TeslimAlan</td>
-                    <td>@item.TeslimEdilenDepartman</td>
-                    <td>@item.UrunDurum</td>
-                    <td>@item.IMEI</td>
-                    <td>@item.Aciklama</td>
-                    <td>
-                        @Html.ActionLink("Düzenle", "Duzenle", new { id = item.Id }, new { @class = "btn btn-info" })
-                    </td>
-                    <td>
-                        @Html.ActionLink("Sil", "Sil", new { id = item.Id }, new { @class = "btn btn-danger", onclick = "return confirm('Bu Kayıt Silinsin mi?')" })
-                    </td>
+                    <th>Id</th>
+                    <th>Tür</th>
+                    <th>Marka</th>
+                    <th>Model</th>
+                    <th>Seri No</th>
+                    <th>Tarih</th>
+                    <th>Teslim Eden</th>
+                    <th>Teslim Alan</th>
+                    <th>Teslim Edilen Dept.</th>
+                    <th>Ürün Durumu</th>
+                    <th>IMEI</th>
+                    <th>Açıklama</th>
+                    <th>Düzenle</th>
+                    <th>Sil</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <th>@item.Id</th>
+                        <td>@item.Tur</td>
+                        <td>@item.Marka</td>
+                        <td>@item.Model</td>
+                        <td>@item.SeriNo</td>
+                        <td>@item.Tarih</td>
+                        <td>@item.TeslimEden</td>
+                        <td>@item.TeslimAlan</td>
+                        <td>@item.TeslimEdilenDepartman</td>
+                        <td>@item.UrunDurum</td>
+                        <td>@item.IMEI</td>
+                        <td>@item.Aciklama</td>
+                        <td>
+                            @Html.ActionLink("Düzenle", "Duzenle", new { id = item.Id }, new { @class = "btn btn-info" })
+                        </td>
+                        <td>
+                            @Html.ActionLink("Sil", "Sil", new { id = item.Id }, new { @class = "btn btn-danger", onclick = "return confirm('Bu Kayıt Silinsin mi?')" })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
     <a href="Ekle" class="btn btn-outline-success">Yeni Ekle</a>
     <br />
 </body>

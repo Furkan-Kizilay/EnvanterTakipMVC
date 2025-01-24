@@ -21,7 +21,7 @@ namespace EnvanterMVC.Entities.Model
         public string TeslimAlan { get; set; }
         public string TeslimEdilenDepartman { get; set; }
         public string UrunDurum { get; set; }
-        public int IMEI { get; set; }
+        public int? IMEI { get; set; } // ? İşareti ile nullable yapıldı.
         public string Aciklama { get; set; }
     }
 }

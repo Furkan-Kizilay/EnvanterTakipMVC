@@ -1,6 +1,6 @@
 ﻿@model EnvanterMVC.Entities.Model.User
 @{
-    ViewBag.Title = "Düzenle"; 
+    ViewBag.Title = "Düzenle";
 }
 
 <!DOCTYPE html>
@@ -17,13 +17,13 @@
     <style>
         .form-control, .form-select {
             width: 100% !important;
-            min-width: 350px; 
-            max-width: 100%; 
-            height: 45px; 
+            min-width: 350px;
+            max-width: 100%;
+            height: 45px;
             border-radius: 8px;
             box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease-in-out;
-            padding: 10px; 
+            padding: 10px;
         }
 
             .form-select:focus, .form-control:focus {
@@ -37,6 +37,7 @@
     </style>
 </head>
 <body>
+    <h2>Veri Düzenle</h2>
     <div>
         @using (Html.BeginForm("Duzenle", "Envanter", FormMethod.Post))
         {
@@ -159,7 +160,6 @@
             </div>
 
             <div class="form-group mt-3 mb-3">
-                <a href="List" class="btn btn-primary">Geri Dön</a>
                 <input type="submit" value="Düzenle" class="btn btn-outline-warning" />
             </div>
         }

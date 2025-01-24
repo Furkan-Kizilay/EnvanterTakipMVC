@@ -15,10 +15,12 @@ namespace EnvanterMVC.Entities.Model.Context
             
         }
         public DbSet<User> User { get; set; }
+        public DbSet<Kullanicilar> Kullanicilar{ get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Configurations.Add(new UserMap());
+            modelBuilder.Configurations.Add(new KullanicilarMap());
         }
     }
 }
