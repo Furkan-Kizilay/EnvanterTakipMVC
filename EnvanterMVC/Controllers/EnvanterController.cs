@@ -13,7 +13,7 @@ namespace EnvanterMVC.Controllers
         // GET: Envanter,
         EnvanterContext context = new EnvanterContext();
         UserDAL UserDAL = new UserDAL();
-
+        KullanicilarDAL KullanicilarDAL = new KullanicilarDAL();
         public ActionResult Index()
         {
             return View();
@@ -125,6 +125,53 @@ namespace EnvanterMVC.Controllers
                 return Json(new { success = false, message = "Hata: " + ex.Message });
             }
         }
+
+        public ActionResult KullaniciOlustur()
+        {
+            return View();
+        }
+
+        // Kullanıcı kayıt işlemi
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult KullaniciOlustur(Kullanicilar kullanicilar)
+        {
+            // Kullanıcı adı ve şifre doğrulama
+            if (string.IsNullOrWhiteSpace(kullanicilar.KullaniciAdi) || kullanicilar.KullaniciAdi.Length < 3 || kullanicilar.KullaniciAdi.Length > 50)
+            {
+                ModelState.AddModelError("", "Kullanıcı adı 3 ile 50 karakter arasında olmalıdır ve boş bırakılamaz.");
+                return View(kullanicilar);
+            }
+
+            if (string.IsNullOrWhiteSpace(kullanicilar.Sifre) || kullanicilar.Sifre.Length < 3 || kullanicilar.Sifre.Length > 15)
+            {
+                ModelState.AddModelError("", "Şifre 6 ile 15 karakter arasında olmalıdır ve boş bırakılamaz.");
+                return View(kullanicilar);
+            }
+
+            try
+            {
+                if (context.Kullanicilar.Any(k => k.KullaniciAdi == kullanicilar.KullaniciAdi))
+                {
+                    ViewBag.Message = "Bu kullanıcı adı zaten mevcut.";
+                    return View(kullanicilar);
+                }
+
+                // Yeni kullanıcı ekle
+                context.Kullanicilar.Add(kullanicilar);
+                context.SaveChanges();
+
+                ViewBag.Message = "Kullanıcı başarıyla oluşturuldu.";
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = "Bir hata oluştu: " + ex.Message;
+                System.Diagnostics.Debug.WriteLine(ex); // Hata loglama
+            }
+
+            return View(kullanicilar);
+        }
+
 
     }
 }

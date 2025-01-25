@@ -1,0 +1,63 @@
+﻿@model EnvanterMVC.Entities.Model.Kullanicilar
+
+@{
+    ViewBag.Title = "Kullanıcı Oluştur";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kullanıcı Oluştur</title>
+    <style>
+        .form-control, .form-select {
+            width: 100% !important;
+            min-width: 350px;
+            max-width: 100%;
+            height: 45px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+            padding: 10px;
+        }
+
+            .form-select:focus, .form-control:focus {
+                border-color: #28a745;
+                box-shadow: 0px 0px 10px rgba(40, 167, 69, 0.5);
+            }
+
+        .text-danger {
+            margin-top: 5px; 
+        }
+    </style>
+</head>
+<body>
+    <h2>Kullanıcı Oluştur</h2>
+    <div class="container-fluid mt-4">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(model => model.KullaniciAdi)
+                @Html.TextBoxFor(model => model.KullaniciAdi, new { @class = "form-control", placeholder = "Kullanıcı Adı" })
+                @Html.ValidationMessageFor(model => model.KullaniciAdi, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(model => model.Sifre)
+                @Html.PasswordFor(model => model.Sifre, new { @class = "form-control", placeholder = "Şifre" })
+                @Html.ValidationMessageFor(model => model.Sifre, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="List" class="btn btn-primary">Geri Dön</a>
+                <button type="submit" class="btn btn-outline-success">Kaydet</button>
+            </div>
+        }
+    </div>
+
+    <script>
+        @* Gereken javascript kodları burada olabilir *@
+    </script>
+</body>
+</html>
