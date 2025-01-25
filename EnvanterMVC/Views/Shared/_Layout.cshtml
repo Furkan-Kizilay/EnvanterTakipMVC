@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title Tablo</title>
+    <title>Envanter Takip | @ViewBag.Title </title>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -24,27 +24,28 @@
                 <ul class="navbar-nav flex-grow-1">
                     <li>
                         @Html.ActionLink("Veri Giriş", "List", "Envanter", new { area = "" }, new { @class = "nav-link text-dark fw-bold" })
-
-                </li>
-                <li>@Html.ActionLink("Çıkış", "Login", "Admin", new { area = "" }, new { @class = "nav-link text-dark fw-bold" })</li>
-            </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li>@Html.ActionLink("Çıkış", "Login", "Admin", new { area = "" }, new { @class = "nav-link text-dark fw-bold" })</li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
-<div class="container">
-    <main role="main">
-        @RenderBody()
-    </main>
-</div>
-
-<footer class="border-top footer text-muted mt-3">
+    </nav>
     <div class="container">
-        &copy; 2024 -
+        <main role="main">
+            @RenderBody()
+        </main>
     </div>
-</footer>
 
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/bootstrap")
-@RenderSection("scripts", required: false)
+    <footer class="border-top footer text-muted mt-3">
+        <div class="container">
+            &copy; 2024 -
+        </div>
+    </footer>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
 </body>
 </html>
