@@ -11,6 +11,7 @@ using System.Web.Security;
 
 namespace EnvanterMVC.Controllers
 {
+    [AllowAnonymous]
     public class AdminController : Controller
     {
         EnvanterContext context = new EnvanterContext(); 

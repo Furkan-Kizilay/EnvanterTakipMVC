@@ -18,6 +18,7 @@ namespace EnvanterMVC
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             FluentValidationModelValidatorProvider.Configure();
+            GlobalFilters.Filters.Add(new AuthorizeAttribute());
         }
         
     }

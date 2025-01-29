@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 namespace EnvanterMVC.Controllers
 {
+    [Authorize]
     public class EnvanterController : Controller
     {
         // GET: Envanter,
