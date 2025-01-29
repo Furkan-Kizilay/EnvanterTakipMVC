@@ -134,6 +134,9 @@
         </div>
     </form>
 </body>
-
 </html>
-
+<script>
+    if (window.location.search.includes("ReturnUrl")) {
+        history.replaceState({}, document.title, "/Admin/Login");
+    }
+</script>
