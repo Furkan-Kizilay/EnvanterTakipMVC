@@ -41,6 +41,12 @@ namespace EnvanterMVC.Controllers
             ViewBag.error = "Kullanıcı adı veya şifre hatalı";
             return View();
         }
+        public ActionResult Logout()
+        {
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Login", "Admin");
+        }
+
     }
 
 }

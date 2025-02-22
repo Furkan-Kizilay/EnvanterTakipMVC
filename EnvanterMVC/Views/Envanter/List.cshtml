@@ -5,23 +5,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <style>
         #scanner {
             width: 50%;
             height: auto;
-            display: none; /* Başlangıçta gizli */ 
+            display: none; /* Başlangıçta gizli */
+        }
+
+        @@media (max-width: 768px) {
+            #scanner {
+                width: 90vw;
+                height: 60vh; /* Telefon ekranının %60’ını kaplasın */
+            }
         }
     </style>
 </head>
 <body>
-    <h3>QR Okuyucu</h3>
-    <button id="startScan" class="btn btn-primary">Kamerayı Aç</button>
+    <h3>QR ve Barkod Okuyucu</h3>
+    <button id="startScanQR" class="btn btn-primary">QR Kod Kamerayı Aç</button>
+    <button id="startScanBarcode" class="btn btn-secondary">Barkod Kamerayı Aç</button>
     <div id="scanner"></div>
-
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const scannerDiv = document.getElementById("scanner");
@@ -45,11 +50,12 @@
                 }
             }
 
-            document.getElementById("startScan").addEventListener("click", function () {
+            document.getElementById("startScanQR").addEventListener("click", function () {
                 if (!isScanning) {
                     scannerDiv.innerHTML = "";
                     scannerDiv.style.display = "block";
                     isScanning = true;
+                    this.innerText = "Kamera'yı Durdur";
 
                     html5QrCode = new Html5Qrcode("scanner");
                     html5QrCode.start(
@@ -81,6 +87,7 @@
                                 html5QrCode.clear();
                                 scannerDiv.style.display = "none";
                                 isScanning = false;
+                                document.getElementById("startScanQR").innerText = "QR Kod Okut";
                             });
                         },
                         (errorMessage) => {
@@ -89,10 +96,90 @@
                     ).catch(err => {
                         console.error("Kamera başlatma hatası:", err);
                         isScanning = false;
+                        this.innerText = "QR Kod Okut";
+                    });
+                } else {
+                    html5QrCode.stop().then(() => {
+                        html5QrCode.clear();
+                        scannerDiv.style.display = "none";
+                        isScanning = false;
+                        this.innerText = "QR Kod Okut";
                     });
                 }
             });
 
+            document.getElementById("startScanBarcode").addEventListener("click", function () {
+                if (!isScanning) {
+                    scannerDiv.innerHTML = "";
+                    scannerDiv.style.display = "block";
+                    isScanning = true;
+                    this.innerText = "Kamera'yı Durdur";
+
+                    Quagga.init({
+                        inputStream: {
+                            name: "Live",
+                            type: "LiveStream",
+                            target: scannerDiv,
+                            constraints: {
+                                facingMode: "environment"
+                            }
+                        },
+                        decoder: {
+                            readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "code_39_vin_reader", "codabar_reader", "upc_reader", "upc_e_reader", "i2of5_reader"]
+                        }
+                    }, function (err) {
+                        if (err) {
+                            console.error("Quagga init hatası:", err);
+                            isScanning = false;
+                            return;
+                        }
+                        Quagga.start();
+                    });
+
+                    Quagga.onDetected(function (result) {
+                        const rawData = result.codeResult.code;
+                        console.log("Ham taranan veri:", rawData);
+
+                        // Taranan verinin doğru formatta olup olmadığını kontrol edelim
+                        if (!rawData.includes('-')) {
+                            console.error("Taranan veri beklenen formatta değil:", rawData);
+                            alert("Barkod verisi doğru formatta değil. Beklenen format: Tür-Marka-Model-SeriNo.");
+                            Quagga.stop();
+                            scannerDiv.style.display = "none";
+                            isScanning = false;
+                            document.getElementById("startScanBarcode").innerText = "Barkod Okut";
+                            return;
+                        }
+
+                        try {
+                            const data = rawData.split('-').map(item => item.trim());
+                            console.log("Ayrıştırılan veri:", data);
+
+                            if (data.length !== 4) {
+                                throw new Error(`Beklenen format: Tür-Marka-Model-SeriNo. Alınan veri: ${rawData}. Ayrıştırılan veri uzunluğu: ${data.length}`);
+                            }
+
+                            const [Tur, Marka, Model, SeriNo] = data;
+                            const queryString = `?tur=${encodeURIComponent(Tur)}&marka=${encodeURIComponent(Marka)}&model=${encodeURIComponent(Model)}&seriNo=${encodeURIComponent(SeriNo)}`;
+                            console.log("Yönlendirilecek URL:", "Ekle" + queryString);
+                            window.location.href = "Ekle" + queryString;
+                        } catch (error) {
+                            console.error("Taranan veri hatası:", error.message);
+                            alert(`Barkod verisi doğru formatta değil. Detay: ${error.message}`);
+                        }
+
+                        Quagga.stop();
+                        scannerDiv.style.display = "none";
+                        isScanning = false;
+                        document.getElementById("startScanBarcode").innerText = "Barkod Okut";
+                    });
+                } else {
+                    Quagga.stop();
+                    scannerDiv.style.display = "none";
+                    isScanning = false;
+                    this.innerText = "Barkod Okut";
+                }
+            });
             const urlParams = new URLSearchParams(window.location.search);
             const tur = urlParams.get('tur');
             const marka = urlParams.get('marka');
@@ -125,16 +212,12 @@
     </script>
 
 
-
     <form action="List" class="mt-3 d-flex justify-content-end align-items-center">
         <div class="form-group" style="margin-right: 5px; flex-grow: 0;">
             @Html.TextBox("ara", null, new { @class = "form-control", placeholder = "Ara..." })
         </div>
         <button type="submit" class="btn btn-secondary">Ara</button>
     </form>
-
-
-
 
     <div class="table-responsive">
         <table id="envanterTable" class="table table-hover table-striped">
