@@ -1,15 +1,17 @@
-﻿@model EnvanterMVC.Entities.Model.User
-@{
-    ViewBag.Title = "Ekle";
-}
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+<html lang="tr">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Veri Ekle</title>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Genel stiller */
         .form-control, .form-select {
             width: 100% !important;
-            min-width: 350px;
+            min-width: auto; /* Sabit genişliği kaldır */
             max-width: 100%;
             height: 45px;
             border-radius: 8px;
@@ -18,20 +20,185 @@
             padding: 10px;
         }
 
+            /* Butonlar ve giriş alanları */
             .form-select:focus, .form-control:focus {
                 border-color: #28a745;
                 box-shadow: 0px 0px 10px rgba(40, 167, 69, 0.5);
             }
 
         .text-danger {
-            margin-top: 5px; /* Validation mesajı */
+            margin-top: 5px;
+        }
+
+        .scan-icon {
+            font-size: 24px;
+            cursor: pointer;
+            margin-left: 10px;
+            color: #6c757d;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+            .scan-icon:hover {
+                transform: scale(1.2);
+                color: #28a745;
+            }
+
+        /* Giriş alanlarını daha iyi hizalama */
+        .input-group {
+            position: relative;
+        }
+
+            .input-group .form-control {
+                padding-right: 40px;
+            }
+
+        .input-group-append {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+        }
+
+        /* Modal için gelişmiş responsive ayarlar */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 530px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        #scannerTitle {
+            margin-bottom: 15px;
+            width: 100%;
+            text-align: center;
+        }
+
+        #qrScanner, #quaggaScanner {
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1 / 1; /* Kare şeklinde tutar */
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+            /* Quagga'nın video elementini düzgün göster */
+            #quaggaScanner video {
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover;
+                display: block; /* Alt boşluğu engeller */
+            }
+
+            /* Html5QrCode kütüphanesinin video elementini düzeltme */
+            #qrScanner video {
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover;
+                display: block;
+            }
+
+            /* Html5QrCode kütüphanesinin canvas elementini düzeltme */
+            #qrScanner canvas {
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: contain;
+            }
+
+        /* Masaüstü görünümü için ek düzenlemeler */
+        @@media screen and (min-width: 768px) {
+            .modal-content {
+                padding: 30px;
+            }
+
+            #qrScanner, #quaggaScanner {
+                max-width: 450px;
+                height: 450px; /* Sabit yükseklik */
+            }
+                /* Tarayıcı alanında boşluk kalmaması için */
+                #qrScanner > div, #quaggaScanner > div {
+                    width: 100% !important;
+                    height: 100% !important;
+                }
+        }
+
+
+        /* iPhone 11 için özel responsive düzenlemeler */
+        @@media screen and (max-width: 414px) {
+            .form-control, .form-select {
+                width: 100%; /* Küçük ekranlara tam genişlik */
+                min-width: auto;
+            }
+
+            .modal-content {
+                width: 95%; /* Daha iyi hizalama için */
+                max-width: 450px;
+                padding: 15px;
+            }
+
+            .scan-icon {
+                font-size: 20px; /* Daha küçük simgeler */
+            }
+
+            .input-group .form-control {
+                padding-right: 35px;
+            }
+
+            .text-center {
+                text-align: center;
+            }
+
+            .btn {
+                width: 100%; /* Küçük ekranlarda butonları tam genişlik yap */
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <h2> Veri Ekle </h2>
     <div class="container-fluid mt-4">
         <form method="post" action="Ekle">
+            <h2>Veri Giriş Sayfası</h2>
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
             <input type="hidden" asp-for="Id">
@@ -39,7 +206,7 @@
 
             <div class="form-group mb-3">
                 <label for="Tur">Tür</label>
-                <select id="Tur" name="Tur" class="form-select">
+                <select id="Tur" name="Tuvr" class="form-select">
                     <option selected>-- Tür Seçiniz --</option>
                     <option value="Notebook">Notebook</option>
                     <option value="Monitör">Monitör</option>
@@ -47,7 +214,6 @@
                     <option value="Tablet">Tablet</option>
                 </select>
             </div>
-
             <div class="form-group mb-3">
                 <label for="Marka">Marka</label>
                 <select id="Marka" name="Marka" class="form-select">
@@ -67,9 +233,27 @@
             </div>
 
             <div class="form-group mb-3">
-                <label for="SeriNo">Seri No</label>
-                <input type="text" id="SeriNo" name="SeriNo" class="form-control">
+                <label for="IMEI">IMEI</label>
+                <div class="input-group">
+                    <input type="text" id="IMEI" name="IMEI" class="form-control">
+                    <div class="input-group-append">
+                        <i id="scanIMEIBarcode" class="fas fa-barcode scan-icon" title="Barkod Tarama"></i>
+                        <i id="scanIMEIQR" class="fas fa-qrcode scan-icon" title="QR Kod Tarama"></i>
+                    </div>
+                </div>
             </div>
+
+            <div class="form-group mb-3">
+                <label for="SeriNo">Seri No</label>
+                <div class="input-group">
+                    <input type="text" id="SeriNo" name="SeriNo" class="form-control">
+                    <div class="input-group-append">
+                        <i id="scanSeriNoBarcode" class="fas fa-barcode scan-icon" title="Barkod Tarama"></i>
+                        <i id="scanSeriNoQR" class="fas fa-qrcode scan-icon" title="QR Kod Tarama"></i>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="form-group mb-3">
                 <label for="Tarih">Tarih</label>
@@ -84,7 +268,6 @@
             <div class="form-group mb-3">
                 <label for="TeslimAlan">Teslim Alan</label>
                 <input type="text" id="TeslimAlan" name="TeslimAlan" class="form-control">
-                @Html.ValidationMessageFor(x => x.TeslimAlan, "", new { @class = "text-danger" })
             </div>
 
             <div class="form-group mb-3">
@@ -98,69 +281,227 @@
             </div>
 
             <div class="form-group mb-3">
-                <label for="IMEI">IMEI</label>
-                <input type="text" id="IMEI" name="IMEI" class="form-control">
-            </div>
-
-            <div class="form-group mb-3">
                 <label for="Aciklama">Açıklama</label>
                 <textarea class="form-control" id="Aciklama" name="Aciklama"></textarea>
             </div>
 
             <div class="text-center mt-4">
-                <a href="List" class="btn btn-primary">Geri Dön</a>
+                <a href="List" class="btn btn-secondary">Geri Dön</a>
                 <button type="submit" class="btn btn-outline-success">Kaydet</button>
             </div>
         </form>
     </div>
 
+    <div id="scannerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h3 id="scannerTitle">QR Kod / Barkod Tarama</h3>
+            <div id="qrScanner"></div>
+            <div id="quaggaScanner"></div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const tur = urlParams.get('tur');
-            const marka = urlParams.get('marka');
-            const model = urlParams.get('model');
-            const seriNo = urlParams.get('seriNo');
+            const scannerModal = document.getElementById("scannerModal");
+            const qrScanner = document.getElementById("qrScanner");
+            const quaggaScanner = document.getElementById("quaggaScanner");
+            const closeBtn = document.querySelector(".close");
 
-            function setDropdownValue(elementId, value) {
-                const element = document.getElementById(elementId);
-                if (element) {
-                    const options = Array.from(element.options);
-                    const match = options.find(option => option.value.toLowerCase() === value.toLowerCase());
-                    if (match) {
-                        element.value = match.value;
-                    } else {
-                        console.warn(`Değer "${value}" ${elementId} dropdown içinde bulunamadı.`);
+            const scanIMEIBarcodeBtn = document.getElementById("scanIMEIBarcode");
+            const scanIMEIQRBtn = document.getElementById("scanIMEIQR");
+            const scanSeriNoBarcodeBtn = document.getElementById("scanSeriNoBarcode");
+            const scanSeriNoQRBtn = document.getElementById("scanSeriNoQR");
+
+            let html5QrCode = null;
+            let targetInput = null;
+
+            function resizeScanners() {
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
+
+                const maxWidth = Math.min(screenWidth * 0.9, 500);
+                const maxHeight = Math.min(screenHeight * 0.7, 600);
+                const scannerSize = Math.min(maxWidth, maxHeight) - 40;
+
+                qrScanner.style.width = scannerSize + "px";
+                qrScanner.style.height = scannerSize + "px";
+                qrScanner.style.margin = "0 auto";
+
+                quaggaScanner.style.width = scannerSize + "px";
+                quaggaScanner.style.height = scannerSize + "px";
+                quaggaScanner.style.margin = "0 auto";
+
+                return { width: scannerSize, height: scannerSize };
+            }
+
+            // QR Kod Tarama
+            function startQRScanner(inputField) {
+                console.log("QR tarayıcı başlatılıyor...");
+                targetInput = document.getElementById(inputField);
+                qrScanner.style.display = "block";
+                quaggaScanner.style.display = "none";
+                scannerModal.style.display = "flex";
+
+                const dimensions = resizeScanners();
+                qrScanner.innerHTML = '';
+
+                html5QrCode = new Html5Qrcode("qrScanner");
+
+                const qrboxSize = Math.floor(dimensions.width * 0.8);
+
+                let isFirstScan = true; // İlk veriyi almayı kontrol edecek değişken
+
+                html5QrCode.start(
+                    { facingMode: "environment" },
+                    {
+                        fps: 20,
+                        qrbox: {
+                            width: qrboxSize,
+                            height: qrboxSize
+                        }
+                    },
+                    (decodedText) => {
+                        if (isFirstScan) {
+                            console.log("QR Kod okundu:", decodedText);
+
+                            // Sadece ilk kısmı almak için virgüle göre ayırma
+                            let firstValue = decodedText.split(',')[0].trim();
+
+                            targetInput.value = firstValue; // İlk kısmı input'a ekle
+                            isFirstScan = false; // İlk veri eklendikten sonra değiştir
+                            stopQRScanner(); // Tarayıcıyı durdur
+                        }
+                    },
+                    (errorMessage) => {
+                        // QR tarama hataları buraya düşebilir ama hata mesajlarını göstermek zorunda değiliz.
                     }
+                ).catch((err) => {
+                    console.error("Kamera açma hatası:", err);
+                    alert("Kamera açılamadı: " + err);
+                    scannerModal.style.display = "none";
+                });
+            }
+
+
+
+            function stopQRScanner() {
+                if (html5QrCode && html5QrCode.isScanning) {
+                    html5QrCode.stop()
+                        .then(() => {
+                            html5QrCode.clear();
+                            html5QrCode = null;
+                            scannerModal.style.display = "none";
+                            console.log("QR tarayıcı durduruldu.");
+                        })
+                        .catch((err) => {
+                            console.error("QR durdurma hatası:", err);
+                            scannerModal.style.display = "none";
+                            html5QrCode = null;
+                        });
                 } else {
-                    console.warn(`${elementId} dropdown bulunamadı.`);
+                    console.warn("QR tarayıcı zaten durdurulmuş veya başlatılmamış.");
+                    scannerModal.style.display = "none";
+                    if (html5QrCode) {
+                        html5QrCode.stop().catch(e => console.error(e));
+                    }
                 }
             }
 
-            if (tur) {
-                setDropdownValue("Tur", tur);
+
+            // Quagga
+            function startBarcodeScanner(inputField) {
+                console.log("Barkod tarayıcı başlatılıyor...");
+                targetInput = document.getElementById(inputField);
+                qrScanner.style.display = "none";
+                quaggaScanner.style.display = "block";
+                scannerModal.style.display = "flex";
+
+                const dimensions = resizeScanners();
+
+                if (typeof Quagga === 'undefined') {
+                    console.error("Quagga kütüphanesi yüklenemedi!");
+                    alert("Barkod tarama kütüphanesi yüklenemedi.");
+                    return;
+                }
+
+                Quagga.init({
+                    inputStream: {
+                        type: "LiveStream",
+                        target: quaggaScanner,
+                        constraints: {
+                            facingMode: "environment",
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 },
+                            aspectRatio: { min: 1, max: 1 } // Kare
+                        },
+                        area: { //
+                            top: "10%",
+                            right: "10%",
+                            left: "10%",
+                            bottom: "10%"
+                        }
+                    },
+                    decoder: {
+                        readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"]
+                    },
+                    locate: true
+                }, function (err) {
+                    if (err) {
+                        console.error("Quagga başlatma hatası:", err);
+                        alert("Barkod tarayıcı açılamadı: " + err);
+                        return;
+                    }
+                    Quagga.start();
+                });
+
+                Quagga.onDetected((data) => {
+                    console.log("Barkod okundu:", data.codeResult.code);
+                    targetInput.value = data.codeResult.code;
+                    stopBarcodeScanner();
+                });
             }
-            if (marka) {
-                setDropdownValue("Marka", marka);
-            }
-            if (model) {
-                const modelInput = document.getElementById("Model");
-                if (modelInput) {
-                    modelInput.value = model;
+
+            function stopBarcodeScanner() {
+                if (Quagga) {
+                    try {
+                        Quagga.stop();
+                    } catch (e) {
+                        console.error("Quagga durdurma hatası:", e);
+                    }
+                    scannerModal.style.display = "none";
+                    console.log("Barkod tarayıcı durduruldu.");
                 } else {
-                    console.warn("Model input alanı bulunamadı.");
+                    console.warn("Barkod tarayıcı başlatılmamış.");
+                    scannerModal.style.display = "none";
                 }
             }
-            if (seriNo) {
-                const seriNoInput = document.getElementById("SeriNo");
-                if (seriNoInput) {
-                    seriNoInput.value = seriNo;
-                } else {
-                    console.warn("SeriNo input alanı bulunamadı.");
+
+            // Event Listeners,Olay dinleyicileri
+            scanIMEIQRBtn.addEventListener("click", () => startQRScanner("IMEI"));
+            scanIMEIBarcodeBtn.addEventListener("click", () => startBarcodeScanner("IMEI"));
+            scanSeriNoQRBtn.addEventListener("click", () => startQRScanner("SeriNo"));
+            scanSeriNoBarcodeBtn.addEventListener("click", () => startBarcodeScanner("SeriNo"));
+
+            closeBtn.addEventListener("click", () => {
+                stopQRScanner();
+                stopBarcodeScanner();
+            });
+
+            // Modal dışına tıklama ile kapatma
+            window.addEventListener("click", (event) => {
+                if (event.target === scannerModal) {
+                    stopQRScanner();
+                    stopBarcodeScanner();
                 }
-            }
+            });
+
+            window.addEventListener("resize", () => {
+                if (scannerModal.style.display === "flex") {
+                    resizeScanners();
+                }
+            });
         });
     </script>
-
 </body>
 </html>
